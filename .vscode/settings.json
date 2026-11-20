@@ -1,0 +1,13 @@
+{
+  "terminal.integrated.profiles.windows": {
+    "PowerShell (Arch Acre)": {
+      "source": "PowerShell",
+      "args": [
+        "-NoExit",
+        "-Command",
+        "if (-not (Get-Command npm.cmd -CommandType Application -ErrorAction SilentlyContinue)) { $nodeDirectory = Join-Path $env:ProgramFiles 'nodejs'; if (Test-Path -LiteralPath (Join-Path $nodeDirectory 'npm.cmd')) { $env:Path = $nodeDirectory + ';' + $env:Path } }; $npmCommand = Get-Command npm.cmd -CommandType Application -ErrorAction SilentlyContinue; if ($npmCommand) { Set-Alias -Name npm -Value $npmCommand.Source }"
+      ]
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "PowerShell (Arch Acre)"
+}
