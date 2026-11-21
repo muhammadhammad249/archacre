@@ -201,7 +201,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ path
         if (!renderTestimonials($, site)) return plain("Not found", 404);
       } else if (page === "projects.html") {
         renderProjectList($, projects ?? [], getCategoryNames(site ?? {}));
-        if (!projects) $("#pjEmpty").text("The portfolio is temporarily unavailable. Please try again shortly.");
+        if (!projects) $("#pjGrid").before('<p class="pj-status" role="status">Some projects are temporarily unavailable. Please try again shortly.</p>');
       } else if (page === "index.html") {
         renderFeaturedProjects($, projects ?? []);
       }

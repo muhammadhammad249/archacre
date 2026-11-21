@@ -17,7 +17,7 @@
 {"@context":"https://schema.org","@type":"ProfessionalService","name":"ARCH ACRE (SMC-Pvt) Ltd","description":"Architecture, interior design and planning consultancy in Lahore, Pakistan.","url":"https://archacre.com/","telephone":"+92-334-7796096","email":"archacre@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Office #1, Second Floor, Shiraz Plaza, Main Market, Gullberg II","addressLocality":"Lahore","addressCountry":"PK"},"founder":{"@type":"Person","name":"Ar. Usama Zafar","jobTitle":"Principal Architect"}}
 </script>
 <link rel="preload" as="image" href="assets/hero-courtyard.jpg" fetchpriority="high">
-<link rel="stylesheet" href="assets/style.css?v=full-width">
+<link rel="stylesheet" href="assets/style.css?v=drafting">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -91,6 +91,48 @@
     <div class="scroll-hint" aria-hidden="true"></div>
   </section>
 
+  <section class="home-projects" aria-labelledby="home-projects-title">
+    <div class="home-projects-panel">
+      <div class="home-projects-heading">
+        <div class="wrap">
+          <h2 id="home-projects-title">Project gallery</h2>
+          <a class="link-arrow" href="projects.html">All projects</a>
+        </div>
+      </div>
+      <div class="home-projects-photos" role="region" aria-label="Project photos" tabindex="0">
+        <figure class="home-projects-card">
+          <img src="assets/project-pepsico-head-office-lahore-1.webp" alt="PepsiCo office with colorful workstations" loading="lazy" decoding="async">
+          <figcaption>PepsiCo Head Office</figcaption>
+        </figure>
+        <figure class="home-projects-card">
+          <img src="assets/project-one-kanal-residence-1.webp" alt="Contemporary house with a landscaped entrance" loading="lazy" decoding="async">
+          <figcaption>1 Kanal Residence</figcaption>
+        </figure>
+        <figure class="home-projects-card">
+          <img src="assets/project-plomax-tech-office-1.webp" alt="Reception with a blue circuit-pattern wall" loading="lazy" decoding="async">
+          <figcaption>Plomax Tech Office</figcaption>
+        </figure>
+        <figure class="home-projects-card">
+          <img src="assets/project-dera-ghazi-khan-farmhouse-1.webp" alt="Farmhouse entrance and covered driveway" loading="lazy" decoding="async">
+          <figcaption>Farmhouse Design</figcaption>
+        </figure>
+        <figure class="home-projects-card">
+          <img src="assets/project-fazal-apartments-1.webp" alt="Corner apartment building at dusk" loading="lazy" decoding="async">
+          <figcaption>Fazal Apartments</figcaption>
+        </figure>
+        <figure class="home-projects-card">
+          <img src="assets/project-pyramid-house-interior-1.webp" alt="Loft with exposed timber and a fireplace" loading="lazy" decoding="async">
+          <figcaption>Pyramid House Interior</figcaption>
+        </figure>
+      </div>
+      <div class="home-projects-navigation" hidden>
+        <div class="wrap">
+          <div class="home-projects-index" role="group" aria-label="Choose a project"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="sec" id="practice">
     <div class="wrap statement-grid">
       <p class="big rv">We design and deliver architecture, interiors and public places — drawn <em>in-house</em>, detailed to build, and built with care.</p>
@@ -113,37 +155,37 @@
         <h2>What we do</h2>
       </div>
       <div class="svc-list">
-        <a class="svc rv" href="services.html">
+        <a class="svc rv" href="services.html#s1">
           <span class="svc-n">01</span>
           <h3>Architecture</h3>
           <p>Concept to construction drawings — homes, façades, monuments and public buildings, detailed for real sites and real budgets.</p>
           <span class="svc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-        <a class="svc rv" href="services.html">
+        <a class="svc rv" href="services.html#s2">
           <span class="svc-n">02</span>
           <h3>Interior</h3>
           <p>Layouts, materials and joinery drawn for local craftsmen — from a single room to a complete residence.</p>
           <span class="svc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-        <a class="svc rv" href="services.html">
+        <a class="svc rv" href="services.html#s3">
           <span class="svc-n">03</span>
           <h3>Town planning</h3>
           <p>Layout plans, plot rationalisation and authority submissions prepared to the standards of the approving body.</p>
           <span class="svc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-        <a class="svc rv" href="services.html">
+        <a class="svc rv" href="services.html#s4">
           <span class="svc-n">04</span>
           <h3>Urban planning</h3>
           <p>Master plans, street design and public realm strategies for markets, gateways and civic fronts.</p>
           <span class="svc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-        <a class="svc rv" href="services.html">
+        <a class="svc rv" href="services.html#s5">
           <span class="svc-n">05</span>
           <h3>Project management</h3>
           <p>BOQs, tendering, site supervision and handover — one point of responsibility from drawing to completion.</p>
           <span class="svc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-        <a class="svc rv" href="services.html">
+        <a class="svc rv" href="services.html#s6">
           <span class="svc-n">06</span>
           <h3>Landscaping</h3>
           <p>Hard and soft landscape, water features and street furniture, coordinated with the architecture.</p>
@@ -159,14 +201,11 @@
     </div>
   </section>
 
-  <section id="architecture-model" class="architecture-showcase" aria-label="Architectural model">
-    <div class="architecture-stage" role="img" aria-label="3D model of a burgundy double helix formed by folded steel ribbons and cross-bracing">
-      <picture class="architecture-poster">
-        <source media="(min-width: 621px)" srcset="assets/architecture-model-wide.webp" width="3200" height="183">
-        <img src="assets/architecture-model.webp?v=helix-1" alt="" width="900" height="286" loading="lazy" decoding="async">
-      </picture>
-      <canvas class="architecture-canvas" aria-hidden="true"></canvas>
-    </div>
+  <section id="architecture-model" class="architecture-showcase" aria-label="Architectural drafting">
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset="assets/architectural-drafting-still.webp">
+      <img src="assets/architectural-drafting-1910x320.gif" alt="A pencil and ruler, a floor plan, and a scale model of the building" width="1910" height="320" loading="lazy" decoding="async">
+    </picture>
   </section>
 
   <section class="sec">
@@ -298,6 +337,6 @@
 </div>
 
 <script src="assets/script.js"></script>
-<script src="assets/architecture-model.js?v=full-width" defer></script>
+<script src="assets/project-scroll.js?v=full-photo" defer></script>
 </body>
 </html>

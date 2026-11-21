@@ -193,6 +193,36 @@ body.loaded h1 .l:nth-child(3) span{transition-delay:.18s}
 @keyframes drop{0%{top:-50%}60%,100%{top:110%}}
 @media (prefers-reduced-motion:reduce){.scroll-hint::after{animation:none}}
 
+/* ---------- homepage project gallery ---------- */
+.home-projects-panel{--gallery-top:69px;--photo-shift:-4%;position:relative;height:calc(100svh - var(--gallery-top));background:var(--wine-950);color:var(--bone);isolation:isolate}
+.home-projects-heading,.home-projects-navigation{position:absolute;inset-inline:0;z-index:1}
+.home-projects-heading{top:0;padding-block:clamp(16px,3vh,32px) 42px;background:linear-gradient(rgba(35,10,16,.8),transparent);pointer-events:none}
+.home-projects-heading .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.home-projects-heading h2{margin:0;font-size:clamp(12px,1.05vw,15px);font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.home-projects-heading .link-arrow{border-color:var(--paper-line);pointer-events:auto}
+.home-projects-heading .link-arrow:hover,.home-projects-heading .link-arrow:focus-visible{color:var(--bone);border-color:var(--bone)}
+.home-projects-photos{position:absolute;inset:0;z-index:0;display:flex;overflow-x:auto;direction:rtl;scroll-snap-type:x mandatory;scroll-behavior:auto}
+.home-projects-card{position:relative;flex:0 0 100%;min-width:0;margin:0;direction:ltr;scroll-snap-align:start}
+.home-projects-card img{width:100%;height:100%;object-fit:cover;user-select:none}
+.home-projects-card figcaption{position:absolute;inset:auto 0 0;padding:40px var(--pad) 20px;background:linear-gradient(transparent,rgba(35,10,16,.88));font-weight:600}
+.home-projects-navigation{bottom:0;padding:56px 0 clamp(16px,3vh,30px);background:linear-gradient(transparent,rgba(35,10,16,.92))}
+.home-projects-navigation .wrap{padding-inline-end:max(var(--pad),72px)}
+.home-projects-index{display:flex;gap:clamp(12px,2vw,26px);overflow-x:auto;scrollbar-width:none;scroll-behavior:auto}
+.home-projects-index button{flex:1 0 auto;padding:9px 0 11px;border:0;border-bottom:2px solid rgba(239,230,218,.35);background:transparent;color:var(--bone);font:inherit;font-size:clamp(12px,1vw,15px);text-align:left;white-space:nowrap;cursor:pointer}
+.home-projects-index button:hover,.home-projects-index button[aria-current="true"]{border-bottom-color:var(--gold)}
+.home-projects-panel :focus-visible{outline-color:var(--bone);outline-offset:-2px}
+.home-projects.scroll-linked::after{content:"";display:block;height:var(--project-scroll-length,0px)}
+.home-projects.scroll-linked .home-projects-panel{position:sticky;top:var(--gallery-top)}
+.home-projects.scroll-linked .home-projects-photos{display:block;overflow:hidden;scroll-snap-type:none;touch-action:pan-y pinch-zoom}
+.home-projects.scroll-linked .home-projects-card{position:absolute;inset:0;visibility:hidden}
+.home-projects.scroll-linked .home-projects-card figcaption{display:none}
+.home-projects.scroll-linked .home-projects-card.is-previous,.home-projects.scroll-linked .home-projects-card.is-active{visibility:visible}
+.home-projects-card.is-previous{z-index:1}
+.home-projects-card.is-active{z-index:2}
+.home-projects.is-shifting .home-projects-card.is-active img{animation:project-photo-in .55s cubic-bezier(.22,.7,.24,1) both}
+.home-projects.is-reversing .home-projects-panel{--photo-shift:4%}
+@keyframes project-photo-in{from{opacity:0;transform:translateX(var(--photo-shift)) scale(1.09)}to{opacity:1;transform:none}}
+
 /* ---------- statement ---------- */
 .statement-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:clamp(28px,7vw,110px);align-items:start}
 .big{font-stretch:62%;text-transform:uppercase;font-weight:500;font-size:clamp(26px,3.35vw,52px);line-height:1.04;max-width:24ch}
@@ -234,24 +264,18 @@ body.loaded h1 .l:nth-child(3) span{transition-delay:.18s}
 .why-item{border-top:2px solid var(--ink);padding-top:18px}
 .why-item h3{margin:0 0 10px;font-stretch:70%;text-transform:uppercase;font-size:clamp(17px,1.6vw,22px);font-weight:600}
 .why-item p{font-size:13.5px;color:var(--ink-soft);line-height:1.65;max-width:34ch}
+.approach-grid .why-item h3{line-height:1.25;text-wrap:balance}
+.approach-grid .why-item p{max-width:none;text-align:justify;hyphens:auto}
+@supports (grid-template-rows:subgrid){
+  @media (min-width:621px){
+    .approach-grid .why-item{display:grid;grid-template-rows:subgrid;grid-row:span 2;row-gap:0}
+  }
+}
 
-/* ---------- architectural model ---------- */
-.architecture-showcase{
-  --band-padding:clamp(48px,6vw,84px);
-  --band-row-height:calc(clamp(40px,4.6vw,72px) + 28px);
-  height:calc(2 * var(--band-padding) + var(--band-row-height));
-  position:relative;overflow:hidden;scroll-margin-top:80px;
-  background:var(--wine-950);
-}
-.architecture-stage{
-  position:relative;width:100%;height:100%;
-  display:grid;place-items:center;
-}
-.architecture-poster{width:100%;height:80%;overflow:hidden}
-.architecture-poster img{width:100%;height:100%;object-fit:cover}
-.architecture-canvas{position:absolute;inset:0;display:block;width:100%;height:100%;visibility:hidden}
-.architecture-showcase.is-rendered .architecture-canvas{visibility:visible}
-.architecture-showcase.is-rendered .architecture-poster{visibility:hidden}
+/* ---------- architectural drafting ---------- */
+.architecture-showcase{scroll-margin-top:80px}
+.architecture-showcase picture{display:block}
+.architecture-showcase img{width:100%;height:auto}
 
 /* ---------- CTA band ---------- */
 .cta{background:var(--wine-900);color:var(--bone);padding:clamp(56px,7vw,96px) 0;position:relative;overflow:hidden}
@@ -362,7 +386,6 @@ body.loaded h1 .l:nth-child(3) span{transition-delay:.18s}
   .site-head:not(.menu-ready) .socials{margin-left:0}
   .statement-grid{grid-template-columns:1fr}
   .why-grid{grid-template-columns:1fr;gap:22px}
-  .architecture-showcase{height:calc(2 * var(--band-padding) + 2 * var(--band-row-height) + 26px)}
   .cta .wrap{grid-template-columns:1fr}
   .cta .actions{flex-direction:row;flex-wrap:wrap}
   .contact-grid{grid-template-columns:1fr}
@@ -376,6 +399,9 @@ body.loaded h1 .l:nth-child(3) span{transition-delay:.18s}
   .row .tag{grid-row:1;grid-column:3}
   .hero-mark{display:none}
 }
+@media (min-width:621px) and (max-width:960px){
+  .approach-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media (max-width:620px){
   .team-grid{grid-template-columns:1fr}
   .pj-grid{grid-template-columns:1fr}
@@ -386,8 +412,6 @@ body.loaded h1 .l:nth-child(3) span{transition-delay:.18s}
   .hero-bg::after{background:linear-gradient(180deg,rgba(22,5,10,.62),rgba(35,10,16,.2) 24%,rgba(35,10,16,.78) 55%,rgba(35,10,16,.94))}
   .hero-foot{grid-template-columns:1fr}
   .hero .actions{justify-content:flex-start}
-  .architecture-showcase{--band-row-height:72px}
-  .architecture-poster img{object-fit:contain}
   .sec-head .sh-sub{display:none}
   .float{gap:8px}
   .fab{width:46px;height:46px}
@@ -401,3 +425,12 @@ body.loaded h1 .l:nth-child(3) span{transition-delay:.18s}
   html{scroll-behavior:auto!important}
   .rv{opacity:1;transform:none}
 }
+
+/* Focused service view opened by a homepage card */
+.service-back{display:none}
+main:has(.svc-detail:target) .page-hero,
+main:has(.svc-detail:target) .service-details~.tint,
+.service-details:has(.svc-detail:target) .svc-detail:not(:target){display:none}
+.service-details:has(.svc-detail:target){padding-top:clamp(120px,15vw,180px)}
+.service-details:has(.svc-detail:target) .service-back{display:inline-block;text-decoration:underline}
+.service-details .svc-detail:target{opacity:1;transform:none;border-bottom:0;scroll-margin-top:150px}

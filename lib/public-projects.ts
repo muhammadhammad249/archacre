@@ -42,33 +42,52 @@ export function projectPath(project: PublicProject) {
   return `/projects/${encodeURIComponent(project.slug)}`;
 }
 
+function categoryKey(name: string) {
+  return name.trim().toLocaleLowerCase("en");
+}
+
 export function renderProjectList($: CheerioAPI, projects: PublicProject[], categoryNames: string[]) {
   const grid = $("#pjGrid");
-  const placeholders = new Map(grid.find(".pj-card").toArray().map((node) => {
+  const buttons = $(".pj-filter");
+  const bundledCategories = new Map(buttons.find("[data-f]").toArray().map((node) => {
+    const button = $(node);
+    return [button.attr("data-f"), button.text()];
+  }));
+  const publishedSlugs = new Set(projects.map(({ slug }) => slug));
+  const bundledCards = grid.find("[data-project-slug]").toArray()
+    .map((node) => ({ card: $(node), category: bundledCategories.get($(node).attr("data-cat")) || "" }))
+    .filter(({ card }) => !publishedSlugs.has(card.attr("data-project-slug") || ""));
+  const staticCards = grid.find(".pj-card:not([data-project-slug])");
+  const placeholders = new Map(staticCards.toArray().map((node) => {
     const card = $(node);
     return [card.find("h3").text().trim(), card.find(".pj-media").clone()];
   }));
-  const defaultPlaceholder = grid.find(".pj-media").first().clone();
+  const defaultPlaceholder = staticCards.find(".pj-media").first().clone();
   grid.empty();
-  const buttons = $(".pj-filter").empty();
-  if (!projects.length) {
+  buttons.empty();
+  if (!projects.length && !bundledCards.length) {
     buttons.remove();
     $("#pjEmpty").text("No projects are published yet.").css("display", "block");
     return;
   }
 
   const categories = new Map<string, { name: string; id: string }>();
-  for (const name of [...categoryNames, ...projects.map((project) => project.category)]) {
-    const key = name.trim().toLocaleLowerCase("en");
+  const names = [...categoryNames, ...projects.map(({ category }) => category), ...bundledCards.map(({ category }) => category)];
+  for (const name of names) {
+    const key = categoryKey(name);
     if (key && !categories.has(key)) categories.set(key, { name, id: `category-${categories.size + 1}` });
   }
-  buttons.append($('<button type="button" class="pf-btn active" data-f="all">All</button>'));
+  buttons.append($('<button type="button" class="pf-btn active" data-f="all" aria-pressed="true">All</button>'));
   for (const { name, id } of categories.values()) {
-    buttons.append($('<button type="button" class="pf-btn"></button>').attr("data-f", id).text(name));
+    buttons.append($('<button type="button" class="pf-btn" aria-pressed="false"></button>').attr("data-f", id).text(name));
+  }
+
+  for (const { card, category } of bundledCards) {
+    grid.append(card.attr("data-cat", categories.get(categoryKey(category))?.id || "uncategorized"));
   }
 
   for (const [index, project] of projects.entries()) {
-    const category = categories.get(project.category.trim().toLocaleLowerCase("en"));
+    const category = categories.get(categoryKey(project.category));
     const article = $('<article class="pj-card rv"></article>').attr("data-cat", category?.id || "uncategorized");
     const image = imagePath(project.cover_image || "");
     const media = image

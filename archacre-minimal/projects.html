@@ -21,7 +21,20 @@
 .pf-btn.active{background:var(--wine);border-color:var(--wine);color:var(--bone)}
 .pj-card.hidden{display:none}
 .pj-empty{display:none;font-size:13px;color:var(--ink-soft);padding:26px 0}
+.pj-status{margin-bottom:16px;color:var(--ink-soft)}
 .pj-media img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.pj-photo:focus-visible{outline-offset:-4px;outline-color:var(--bone)}
+.pj-photo-label{position:absolute;inset:auto 0 0;padding:16px 14px 10px;background:linear-gradient(transparent,rgba(35,10,16,.88));color:#fff;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.pj-photo:hover .pj-photo-label,.pj-photo:focus-visible .pj-photo-label{text-decoration:underline;text-underline-offset:3px}
+.pj-gallery{width:min(calc(100% - 24px),980px);max-width:none;max-height:calc(100% - 24px);margin:auto;padding:0;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.pj-gallery::backdrop{background:rgba(35,10,16,.83)}
+.pj-gallery-head,.pj-gallery-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px clamp(12px,2vw,24px)}
+.pj-gallery-head h2{margin:0;font-stretch:68%;font-size:clamp(20px,3vw,30px);line-height:1.1}
+.pj-gallery button{border:1px solid var(--line-2);border-radius:999px;background:transparent;color:var(--wine);font:inherit;font-size:.875rem;padding:7px 12px;cursor:pointer}
+.pj-gallery button:hover{background:var(--wine);border-color:var(--wine);color:var(--bone)}
+.pj-gallery img{display:block;width:100%;height:min(64vh,620px);background:var(--wine-950);object-fit:contain}
+.pj-gallery-controls{font-size:.875rem}
+.pj-gallery-controls[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -68,7 +81,7 @@
     <div class="wrap">
       <p class="crumbs rv"><a href="index.html">Home</a><span class="sep">/</span>Projects</p>
       <h1 class="page-title rv rv-d1">Selected work</h1>
-      <p class="page-lede rv rv-d2">Public, civic and private commissions across Pakistan. Photography is being added as each project is documented.</p>
+      <p class="page-lede rv rv-d2">Selected architecture, civic and interior design projects from Pakistan and beyond.</p>
       <div class="dim rv rv-d3" aria-hidden="true">
         <span class="tick"></span><span class="rule"></span>
         <span class="label"><b>6 disciplines</b>&nbsp;&nbsp;·&nbsp;&nbsp;Public &amp; private&nbsp;&nbsp;·&nbsp;&nbsp;Across Punjab &amp; beyond</span>
@@ -80,15 +93,270 @@
   <section class="sec">
     <div class="wrap">
       <div class="pj-filter rv" role="group" aria-label="Filter projects">
-        <button class="pf-btn active" data-f="all">All</button>
-        <button class="pf-btn" data-f="urban">Urban &amp; public</button>
-        <button class="pf-btn" data-f="res">Residential</button>
-        <button class="pf-btn" data-f="int">Interiors</button>
-        <button class="pf-btn" data-f="sport">Sports</button>
-        <button class="pf-btn" data-f="health">Healthcare</button>
+        <button type="button" class="pf-btn active" data-f="all" aria-pressed="true">All</button>
+        <button type="button" class="pf-btn" data-f="urban" aria-pressed="false">Urban &amp; public</button>
+        <button type="button" class="pf-btn" data-f="res" aria-pressed="false">Residential</button>
+        <button type="button" class="pf-btn" data-f="int" aria-pressed="false">Interiors</button>
+        <button type="button" class="pf-btn" data-f="sport" aria-pressed="false">Sports</button>
+        <button type="button" class="pf-btn" data-f="health" aria-pressed="false">Healthcare</button>
+        <button type="button" class="pf-btn" data-f="commercial" aria-pressed="false">Commercial</button>
       </div>
 
       <div class="pj-grid" id="pjGrid">
+        <article class="pj-card rv" data-cat="int" data-project-slug="pepsico-head-office-lahore">
+          <a class="pj-media pj-photo" href="assets/project-pepsico-head-office-lahore-1.webp" aria-label="View 4 photos for PepsiCo Head Office" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-pepsico-head-office-lahore-1.webp" alt="Open-plan PepsiCo office with colorful workstations" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 4 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-pepsico-head-office-lahore-2.webp" alt="BEV Room lobby entrance">
+            <img src="assets/project-pepsico-head-office-lahore-3.webp" alt="Executive office with a teal accent wall">
+            <img src="assets/project-pepsico-head-office-lahore-4.webp" alt="Outdoor terrace with pergola and bar">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>PepsiCo Head Office</h3>
+            <span class="meta">Lahore, Punjab</span>
+            <p>Office interiors, lobby and terrace designed in collaboration with HZK Associates.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=PepsiCo+Head+Office#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="res" data-project-slug="one-kanal-residence">
+          <a class="pj-media pj-photo" href="assets/project-one-kanal-residence-1.webp" aria-label="View photo for 1 Kanal Residence" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-one-kanal-residence-1.webp" alt="Contemporary house with a landscaped entrance and timber accents" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View photo</span>
+          </a>
+          <div class="pj-body">
+            <span class="idx">Residential</span>
+            <h3>1 Kanal Residence</h3>
+            <span class="meta">Dera Ghazi Khan, Punjab</span>
+            <p>A contemporary house with a recessed entrance and layered façade.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=1+Kanal+Residence#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="int" data-project-slug="plomax-tech-office">
+          <a class="pj-media pj-photo" href="assets/project-plomax-tech-office-1.webp" aria-label="View 2 photos for Plomax Tech Office" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-plomax-tech-office-1.webp" alt="Plomax Tech reception with a blue circuit-pattern feature wall" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 2 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-plomax-tech-office-2.webp" alt="Open workspace with shared desks and a timber ceiling">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>Plomax Tech Office</h3>
+            <span class="meta">Lahore, Punjab</span>
+            <p>Reception and workspace interiors designed in collaboration with Delta Design and Engineering.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Plomax+Tech+Office#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="int" data-project-slug="duniya-travels-and-tours">
+          <a class="pj-media pj-photo" href="assets/project-duniya-travels-and-tours-1.webp" aria-label="View photo for Duniya Travels &amp; Tours Head Office" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-duniya-travels-and-tours-1.webp" alt="Duniya Travels reception with a timber desk and illuminated signage" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View photo</span>
+          </a>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>Duniya Travels &amp; Tours Head Office</h3>
+            <span class="meta">Izmir Town, Lahore</span>
+            <p>Head office interiors designed in collaboration with Delta Design and Engineering.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Duniya+Travels+%26+Tours+Head+Office#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="res" data-project-slug="fazal-apartments">
+          <a class="pj-media pj-photo" href="assets/project-fazal-apartments-1.webp" aria-label="View 2 photos for Fazal Apartments" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-fazal-apartments-1.webp" alt="Street-level view of the apartment building at dusk" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 2 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-fazal-apartments-2.webp" alt="Elevated view of the apartment building and adjoining streets">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Residential</span>
+            <h3>Fazal Apartments</h3>
+            <span class="meta">Dera Ghazi Khan, Punjab</span>
+            <p>Apartment building on a corner site with a layered brick-and-light façade.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Fazal+Apartments#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="int" data-project-slug="paf-residential-selection-centre">
+          <a class="pj-media pj-photo" href="assets/project-paf-residential-selection-centre-1.webp" aria-label="View photo for PAF Residential Selection Centre" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-paf-residential-selection-centre-1.webp" alt="Bathroom fitting and finish displays in the selection centre" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View photo</span>
+          </a>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>PAF Residential Selection Centre</h3>
+            <p>Interior design for a display space with bathroom fittings and finishes.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=PAF+Residential+Selection+Centre#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="res" data-project-slug="dera-ghazi-khan-farmhouse">
+          <a class="pj-media pj-photo" href="assets/project-dera-ghazi-khan-farmhouse-1.webp" aria-label="View 2 photos for Farmhouse Design" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-dera-ghazi-khan-farmhouse-1.webp" alt="Farmhouse entrance with a covered driveway" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 2 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-dera-ghazi-khan-farmhouse-2.webp" alt="Landscaped farmhouse courtyard framed by columns">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Residential</span>
+            <h3>Farmhouse Design</h3>
+            <span class="meta">Dera Ghazi Khan, Punjab</span>
+            <p>A farmhouse arranged around a landscaped entrance and courtyard.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Farmhouse+Design#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="int" data-project-slug="pepsico-hattar">
+          <a class="pj-media pj-photo" href="assets/project-pepsico-hattar-1.webp" aria-label="View 2 photos for PepsiCo Hattar" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-pepsico-hattar-1.webp" alt="Pepsi portfolio lounge with illuminated branding" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 2 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-pepsico-hattar-2.webp" alt="Boardroom with a geometric timber ceiling">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>PepsiCo Hattar</h3>
+            <span class="meta">Hattar</span>
+            <p>Boardroom and lounge interiors designed in collaboration with HZK Associates.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=PepsiCo+Hattar#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="int" data-project-slug="mr-yameen-house-interior">
+          <a class="pj-media pj-photo" href="assets/project-mr-yameen-house-interior-1.webp" aria-label="View 4 photos for Mr. Yameen’s House Interior" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-mr-yameen-house-interior-1.webp" alt="Living room with floor-to-ceiling windows and timber details" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 4 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-mr-yameen-house-interior-2.webp" alt="Bedroom with a padded headboard and fluted walls">
+            <img src="assets/project-mr-yameen-house-interior-3.webp" alt="Bedroom with illuminated wall lettering">
+            <img src="assets/project-mr-yameen-house-interior-4.webp" alt="Rooftop barbecue lounge at sunset">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>Mr. Yameen’s House Interior</h3>
+            <span class="meta">Dera Ghazi Khan, Punjab</span>
+            <p>Residential interiors covering the living room, bedrooms and rooftop lounge.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Mr.+Yameen%E2%80%99s+House+Interior#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="commercial" data-project-slug="dera-ghazi-khan-plaza">
+          <a class="pj-media pj-photo" href="assets/project-dera-ghazi-khan-plaza-1.webp" aria-label="View photo for Plaza Design" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-dera-ghazi-khan-plaza-1.webp" alt="Plaza exterior with a vertical screen and glazed entrance" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View photo</span>
+          </a>
+          <div class="pj-body">
+            <span class="idx">Commercial</span>
+            <h3>Plaza Design</h3>
+            <span class="meta">Dera Ghazi Khan, Punjab</span>
+            <p>Commercial building design with a screened façade and a double-height entrance.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Plaza+Design#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="int" data-project-slug="pyramid-house-interior">
+          <a class="pj-media pj-photo" href="assets/project-pyramid-house-interior-1.webp" aria-label="View photo for Pyramid House Interior" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-pyramid-house-interior-1.webp" alt="Loft living area with a fireplace and exposed timber ceiling" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View photo</span>
+          </a>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>Pyramid House Interior</h3>
+            <span class="meta">Romania</span>
+            <p>Loft interiors designed in collaboration with Ar. Abdullah Shahid.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Pyramid+House+Interior#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="int" data-project-slug="sialkot-kitchen-design">
+          <a class="pj-media pj-photo" href="assets/project-sialkot-kitchen-design-1.webp" aria-label="View 3 photos for Kitchen Design" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-sialkot-kitchen-design-1.webp" alt="Timber kitchen with a stone island and pendant lights" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 3 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-sialkot-kitchen-design-2.webp" alt="Kitchen island and long window from the side">
+            <img src="assets/project-sialkot-kitchen-design-3.webp" alt="Kitchen shelving and countertop with built-in lighting">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>Kitchen Design</h3>
+            <span class="meta">Sialkot, Punjab</span>
+            <p>A kitchen with warm timber cabinetry and a stone island, designed with Ar. Noor Ghumman.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Kitchen+Design#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="int" data-project-slug="thynk-tank-office">
+          <a class="pj-media pj-photo" href="assets/project-thynk-tank-office-1.webp" aria-label="View 2 photos for Thynk Tank Office Interior" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-thynk-tank-office-1.webp" alt="Office reception with a waiting area and wall artwork" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 2 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-thynk-tank-office-2.webp" alt="Executive office with timber shelving and lounge seating">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Interiors</span>
+            <h3>Thynk Tank Office Interior</h3>
+            <span class="meta">Lahore, Punjab</span>
+            <p>Office interiors for a reception area and executive room.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Thynk+Tank+Office+Interior#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="res" data-project-slug="four-kanal-villa">
+          <a class="pj-media pj-photo" href="assets/project-four-kanal-villa-1.webp" aria-label="View photo for 4 Kanal Villa Design" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-four-kanal-villa-1.webp" alt="Villa exterior viewed across a landscaped garden" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View photo</span>
+          </a>
+          <div class="pj-body">
+            <span class="idx">Residential</span>
+            <h3>4 Kanal Villa Design</h3>
+            <p>A villa with sheltered outdoor spaces opening onto a garden.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=4+Kanal+Villa+Design#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="res" data-project-slug="mr-jamshid-house">
+          <a class="pj-media pj-photo" href="assets/project-mr-jamshid-house-1.webp" aria-label="View photo for Mr. Jamshid’s 10 Marla House" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-mr-jamshid-house-1.webp" alt="Two-storey house with horizontal balconies and a timber garage door" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View photo</span>
+          </a>
+          <div class="pj-body">
+            <span class="idx">Residential</span>
+            <h3>Mr. Jamshid’s 10 Marla House</h3>
+            <span class="meta">Dera Ghazi Khan, Punjab</span>
+            <p>A 10 marla house with a projecting upper floor and recessed balcony.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Mr.+Jamshid%E2%80%99s+10+Marla+House#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
+        <article class="pj-card rv" data-cat="urban" data-project-slug="girl-friendly-toilet">
+          <a class="pj-media pj-photo" href="assets/project-girl-friendly-toilet-1.webp" aria-label="View 3 photos for Girl-Friendly Toilet" aria-haspopup="dialog" aria-controls="pjGallery">
+            <img src="assets/project-girl-friendly-toilet-1.webp" alt="Ramped entrance to a public toilet with colorful wall graphics" loading="lazy" decoding="async">
+            <span class="pj-photo-label">View 3 photos</span>
+          </a>
+          <template class="pj-photos">
+            <img src="assets/project-girl-friendly-toilet-2.webp" alt="Walkway and handrails leading to the toilet entrance">
+            <img src="assets/project-girl-friendly-toilet-3.webp" alt="Aerial view of the public toilet and access ramp">
+          </template>
+          <div class="pj-body">
+            <span class="idx">Urban &amp; public</span>
+            <h3>Girl-Friendly Toilet</h3>
+            <p>A public toilet design with a ramped entrance, developed with AGAHE and MGZ.</p>
+            <a class="link-arrow" href="contact.html?kind=project&amp;project=Girl-Friendly+Toilet#enquiry">Ask about this project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+          </div>
+        </article>
+
         <article class="pj-card rv" data-cat="urban">
           <div class="pj-media" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=".8"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/><path d="M8 11h1M11 11h1M15 11h1M8 14h1M11 14h1M15 14h1"/></svg>
@@ -202,6 +470,19 @@
         </article>
       </div>
       <p class="pj-empty" id="pjEmpty">No projects in this category yet — check back soon.</p>
+
+      <dialog class="pj-gallery" id="pjGallery" aria-labelledby="pjGalleryTitle">
+        <div class="pj-gallery-head">
+          <h2 id="pjGalleryTitle">Project photos</h2>
+          <form method="dialog"><button type="submit" autofocus>Close</button></form>
+        </div>
+        <img alt="" decoding="async">
+        <div class="pj-gallery-controls" hidden>
+          <button type="button" data-step="-1">Previous</button>
+          <span role="status"></span>
+          <button type="button" data-step="1">Next</button>
+        </div>
+      </dialog>
     </div>
   </section>
 
@@ -286,8 +567,10 @@
   var btns=document.querySelectorAll(".pf-btn"),cards=document.querySelectorAll(".pj-card"),empty=document.getElementById("pjEmpty");
   btns.forEach(function(b){
     b.addEventListener("click",function(){
-      btns.forEach(function(x){x.classList.remove("active")});
-      b.classList.add("active");
+      btns.forEach(function(x){
+        x.classList.toggle("active",x===b);
+        x.setAttribute("aria-pressed",String(x===b));
+      });
       var f=b.getAttribute("data-f"),shown=0;
       cards.forEach(function(c){
         var show=(f==="all")||c.getAttribute("data-cat")===f;
@@ -296,6 +579,49 @@
       });
       if(empty)empty.style.display=shown?"none":"block";
     });
+  });
+})();
+
+(function () {
+  const gallery = document.getElementById("pjGallery");
+  if (!gallery || typeof gallery.showModal !== "function") return;
+
+  const title = gallery.querySelector("h2");
+  const image = gallery.querySelector("img");
+  const controls = gallery.querySelector(".pj-gallery-controls");
+  const count = controls.querySelector("[role=status]");
+  let photos = [];
+  let current = 0;
+
+  function showPhoto(index) {
+    current = (index + photos.length) % photos.length;
+    image.alt = photos[current].alt;
+    image.src = photos[current].getAttribute("src");
+    count.textContent = `${current + 1} of ${photos.length}`;
+  }
+
+  document.querySelectorAll(".pj-photo").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      const card = link.closest(".pj-card");
+      const extraPhotos = card.querySelector(".pj-photos");
+      photos = [link.querySelector("img")];
+      if (extraPhotos) photos.push(...extraPhotos.content.querySelectorAll("img"));
+      title.textContent = card.querySelector("h3").textContent;
+      controls.hidden = photos.length < 2;
+      showPhoto(0);
+      gallery.showModal();
+    });
+  });
+
+  controls.querySelectorAll("[data-step]").forEach((button) => {
+    button.addEventListener("click", () => showPhoto(current + Number(button.dataset.step)));
+  });
+  gallery.addEventListener("keydown", (event) => {
+    if (controls.hidden || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    showPhoto(current + (event.key === "ArrowRight" ? 1 : -1));
   });
 })();
 </script>
