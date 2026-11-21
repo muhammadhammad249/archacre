@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 import { isStudioSessionCookie, readStudioConfig, studioCookieOptions, studioSessionCookie } from "./lib/studio-auth-config";
+import { supabaseFetch } from "./lib/supabase-fetch";
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -8,6 +9,7 @@ export async function proxy(request: NextRequest) {
 
   if (config && request.cookies.getAll().some(({ name }) => isStudioSessionCookie(name))) {
     const supabase = createServerClient(config.url, config.key, {
+      global: { fetch: supabaseFetch },
       cookieOptions: { ...studioCookieOptions, name: studioSessionCookie },
       cookies: {
         getAll: () => request.cookies.getAll(),
@@ -22,7 +24,11 @@ export async function proxy(request: NextRequest) {
         },
       },
     });
-    await supabase.auth.getClaims();
+    try {
+      await supabase.auth.getClaims();
+    } catch {
+      // Protected pages verify the session again before returning data.
+    }
   }
 
   response.headers.set("Cache-Control", "private, no-store");

@@ -6,7 +6,7 @@ The studio sign-in path is **/studio/login**. The public site has no link to it.
 
 ## Local setup
 
-1. Create a Supabase project and run [001_studio.sql](supabase/migrations/001_studio.sql) and [002_seed_projects.sql](supabase/migrations/002_seed_projects.sql) in order, using the SQL Editor or Supabase CLI. The second migration imports the existing portfolio.
+1. Create a Supabase project and apply [001_studio.sql](supabase/migrations/001_studio.sql), [002_seed_projects.sql](supabase/migrations/002_seed_projects.sql), and [003_inquiry_notifications.sql](supabase/migrations/003_inquiry_notifications.sql) in order. The second migration imports the existing portfolio. An existing database that already has the first two migrations only needs the third.
 2. In Supabase Authentication, disable public sign-ups, enable email/password and TOTP, and create or invite the administrator. Copy their UUID from the Users screen and run the SQL below with that UUID. Repeat for any other approved administrator.
 3. Copy [.env.example](.env.example) to `.env.local`. Set the project URL, publishable key and server-only secret key. Generate a private rate-limit secret using the command below.
 4. Set the site URL and allow its exact authentication callback URL, such as `http://localhost:3000/studio/auth/callback`, in Supabase Auth. Configure custom SMTP and keep the standard password recovery link template.
@@ -23,7 +23,7 @@ node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 
 [Supabase Auth setup](https://supabase.com/docs/guides/auth/server-side/creating-a-client?framework=nextjs) · [Authenticator codes](https://supabase.com/docs/guides/auth/auth-mfa/totp) · [Custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp)
 
-With no Supabase configuration, the public site serves its existing content and the studio disables sign-in. The original static preview is available through `npm run dev:static`.
+Without Supabase, the public site serves its bundled content, the contact page links to direct email, and the studio disables sign-in. If a configured database becomes temporarily unavailable, public pages still render and the portfolio reports that live projects are unavailable. The original static preview is available through `npm run dev:static`.
 
 ## Projects and media
 
@@ -31,7 +31,11 @@ Upload JPG, PNG, WebP or AVIF still images to the media library. Choose an optio
 
 ## Inquiries and email
 
-With the server secret configured, the public contact form stores general, project and quote requests in the private inbox. Set `RESEND_API_KEY`, `INQUIRY_FROM_EMAIL` on a verified sending domain and `INQUIRY_TO_EMAIL` to enable new-inquiry email. Submission stays in the inbox if the email service is unavailable. Supabase Auth sends password recovery through its own SMTP configuration. [Resend email API](https://resend.com/docs/api-reference/emails/send-email)
+The public contact form accepts general, project, and quote requests without a login. Visitors can leave an email address, a phone number, or both. Submissions and their email queue entries are saved together. Only verified admins can read the inbox, update follow-up status, or export it.
+
+Set `RESEND_API_KEY`, `INQUIRY_FROM_EMAIL` on a verified sending domain, and `INQUIRY_TO_EMAIL` to receive inquiry notifications. The inbox shows whether a notification is queued, accepted by the email provider, or failed. The first email attempt runs after submission, and temporary errors are retried. Admins can also process due notifications from **Studio → Inquiries**. Supabase Auth uses its separate SMTP settings for admin password recovery. [Resend email API](https://resend.com/docs/api-reference/emails/send-email)
+
+For automatic retries, give the hosting scheduler a dedicated random `CRON_SECRET` of at least 32 characters. Have it call `GET /api/cron/inquiry-notifications` every few minutes with `Authorization: Bearer <CRON_SECRET>`. Use HTTPS and store the secret in the scheduler and application's private settings. The worker processes up to four notifications per call.
 
 ## Deployment and backups
 

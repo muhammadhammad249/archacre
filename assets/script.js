@@ -120,6 +120,7 @@
       var submitBtn = form.querySelector('button[type="submit"]');
       var submitLabel = submitBtn.textContent;
       var managedForm = form.getAttribute("action") === "/api/inquiries";
+      var submission = form.elements.namedItem("submission_id");
       var contactEmail = form.getAttribute("data-contact-email") || "archacre@gmail.com";
       var fallback = "Something went wrong while sending. Please try again, or email us directly at " + contactEmail + ".";
       function show(msg, ok) {
@@ -136,13 +137,20 @@
         fetch(form.action, {
           method: "POST",
           body: new FormData(form),
-          headers: { "Accept": "application/json" }
+          headers: { "Accept": "application/json" },
+          signal: typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function"
+            ? AbortSignal.timeout(25000)
+            : undefined
         }).then(function (r) {
           if (r.ok) {
             show("Thank you — your enquiry has been received. We usually reply within one working day.", true);
             form.reset();
+            if (submission) {
+              submission.value = window.crypto?.randomUUID?.() || "";
+            }
           } else if (managedForm) {
             return r.json().then(function (body) {
+              if (r.status >= 500) return show(fallback, false);
               var message = body && typeof body.message === "string" ? body.message : fallback;
               show(message, false);
             }, function () {
@@ -152,7 +160,7 @@
             show(fallback, false);
           }
         }).catch(function () {
-          show("Network error — please check your connection and try again.", false);
+          show(fallback, false);
         }).finally(function () {
           submitBtn.disabled = false;
           submitBtn.textContent = submitLabel;

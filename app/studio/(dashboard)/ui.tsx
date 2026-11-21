@@ -7,6 +7,8 @@ const messages: Record<string, string> = {
   "image-size": "Select up to eight images totalling 3.9 MB or less.",
   "image-format": "Use still JPG, PNG, WebP or AVIF images under 32 megapixels.",
   "media-in-use": "Remove this image from the projects or pages that use it before deleting.",
+  "mail-processed": "Checked the email queue. Each inquiry shows its notification status.",
+  "mail-unavailable": "Email notifications are temporarily unavailable. Inquiries remain in the inbox.",
   "retry-delete": "This image is hidden. Retry deletion to finish removing the file.",
   "password-updated": "Password updated.",
   "password-invalid": "Enter matching passwords with at least 12 characters and try again.",
@@ -14,7 +16,7 @@ const messages: Record<string, string> = {
 
 export function Notice({ code }: { code?: string }) {
   if (!code || !Object.hasOwn(messages, code)) return null;
-  const ok = ["saved", "deleted", "uploaded", "password-updated"].includes(code);
+  const ok = ["saved", "deleted", "uploaded", "password-updated", "mail-processed"].includes(code);
   return <p role={ok ? "status" : "alert"} className={"notice" + (ok ? "" : " error")}>{messages[code]}</p>;
 }
 

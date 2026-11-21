@@ -1,6 +1,8 @@
 import "server-only";
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { readServiceKey, readStudioConfig } from "./studio-auth-config";
+import { supabaseFetch } from "./supabase-fetch";
 
 export type SiteContent = Record<string, unknown>;
 
@@ -22,18 +24,21 @@ export type PublicProject = {
 };
 
 const visibleFields = "id,slug,title,description,category,location,completion_date,area,cover_image,gallery,featured,sort_order,seo_title,seo_description";
-const clientOptions = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
+const clientOptions = {
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  db: { retry: false },
+  global: { fetch: supabaseFetch },
+};
 
 export function publicDatabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  return url && key ? createClient(url, key, clientOptions) : null;
+  const config = readStudioConfig();
+  return config ? createClient(config.url, config.key, clientOptions) : null;
 }
 
 export function serviceDatabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  return url && key ? createClient(url, key, clientOptions) : null;
+  const config = readStudioConfig();
+  const key = readServiceKey();
+  return config && key ? createClient(config.url, key, clientOptions) : null;
 }
 
 export async function getWebsiteContent(database: SupabaseClient): Promise<SiteContent> {

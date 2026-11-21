@@ -8,9 +8,31 @@ export const studioCookieOptions = {
 };
 
 export function readStudioConfig() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
-  return url && key ? { url, key } : null;
+  if (!key) return null;
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ?? "");
+    if (url.username || url.password || url.search || url.hash) return null;
+    if (url.protocol === "https:" || (url.protocol === "http:" && process.env.NODE_ENV !== "production")) {
+      return { url: url.href, key };
+    }
+  } catch {
+    // An invalid URL leaves the studio unavailable.
+  }
+  return null;
+}
+
+export function readServiceKey() {
+  return process.env.SUPABASE_SECRET_KEY?.trim() || process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+}
+
+export function readRateLimitSecret() {
+  const key = process.env.STUDIO_RATE_LIMIT_SECRET?.trim();
+  return key && key.length >= 32 ? key : null;
+}
+
+export function studioSignInConfigured() {
+  return Boolean(readStudioConfig() && readServiceKey() && readRateLimitSecret());
 }
 
 export function studioOrigin() {

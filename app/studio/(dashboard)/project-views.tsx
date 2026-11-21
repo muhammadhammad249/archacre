@@ -21,11 +21,16 @@ export async function ProjectsView({ db, notice }: { db: StudioClient; notice?: 
           <td><Link className="studio-link" href={"/studio/projects/" + project.id}>{project.title}</Link>
             {project.featured && <div className="studio-muted">Featured</div>}</td>
           <td>{project.category}</td><td>{project.sort_order}</td><td><Status value={project.status} /></td>
-          <td><form action={changeProjectStatus}>
-            <input type="hidden" name="id" value={project.id} />
-            <input type="hidden" name="status" value={project.status === "published" ? "draft" : "published"} />
-            <button type="submit" className="button">{project.status === "published" ? "Unpublish" : "Publish"}</button>
-          </form></td>
+          <td>
+            <div className="studio-inline">
+              <form action={changeProjectStatus}>
+                <input type="hidden" name="id" value={project.id} />
+                <input type="hidden" name="status" value={project.status === "published" ? "draft" : "published"} />
+                <button type="submit" className="button">{project.status === "published" ? "Unpublish" : "Publish"}</button>
+              </form>
+              <Link className="button danger" href={`/studio/projects/${project.id}/remove`} aria-label={`Remove ${project.title}`}>Remove</Link>
+            </div>
+          </td>
         </tr>)}</tbody>
       </table></div> : <p>There are no projects yet.</p>}
     </section>
@@ -58,6 +63,7 @@ export async function ProjectView({ db, id, notice }: { db: StudioClient; id: st
     <Heading title={project?.title ?? "New project"} description={project ? "Edit project details and publishing settings." : "Add a project to the portfolio."}>
       <Link className="button" href="/studio/projects">All projects</Link>
       {project?.status === "published" && <Link className="button" href={"/projects/" + project.slug}>View on website</Link>}
+      {project && <Link className="button danger" href={`/studio/projects/${project.id}/remove`}>Remove project</Link>}
     </Heading>
     <Notice code={notice} />
     <form action={saveProject} className="studio-form">
@@ -104,13 +110,22 @@ export async function ProjectView({ db, id, notice }: { db: StudioClient; id: st
         <div><button type="submit" className="primary">Save project</button></div>
       </section>
     </form>
-    {project && <details className="studio-panel">
-      <summary>Delete project</summary>
-      <form action={deleteProject} className="studio-form">
-        <input type="hidden" name="id" value={project.id} />
-        <label className="studio-check"><input type="checkbox" name="confirm" required /> Permanently delete this project.</label>
-        <div><button type="submit" className="button danger">Delete project</button></div>
-      </form>
-    </details>}
+  </>;
+}
+
+export async function RemoveProjectView({ db, id }: { db: StudioClient; id: string }) {
+  const project = await getProject(db, id);
+  if (!project) notFound();
+  return <>
+    <Heading title="Remove project" description={project.title}>
+      <Link className="button" href="/studio/projects">Cancel</Link>
+    </Heading>
+    <form action={deleteProject} className="studio-panel studio-form">
+      <input type="hidden" name="id" value={project.id} />
+      <label className="studio-check">
+        <input type="checkbox" name="confirm" required /> Permanently remove this project from the portfolio.
+      </label>
+      <div><button type="submit" className="button danger">Remove project</button></div>
+    </form>
   </>;
 }

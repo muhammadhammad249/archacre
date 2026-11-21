@@ -1,10 +1,13 @@
 import { readFile } from "node:fs/promises";
+import { createHash, randomUUID } from "node:crypto";
 import { extname, resolve } from "node:path";
 import { load, type CheerioAPI } from "cheerio";
 import { after } from "next/server";
 import { getBlogPosts, getCategoryNames, renderBlog, renderManagedContent, renderTestimonials } from "@/lib/public-cms";
 import { getPublishedProject, getPublishedProjects, getWebsiteContent, publicDatabase, serviceDatabase } from "@/lib/public-db";
+import { inquiryMailConfig } from "@/lib/inquiry-mail";
 import { renderFeaturedProjects, renderProjectDetail, renderProjectList } from "@/lib/public-projects";
+import { readRateLimitSecret } from "@/lib/studio-auth-config";
 import { isWebsitePage, readWebsitePage } from "@/lib/website-files";
 
 export const runtime = "nodejs";
@@ -50,14 +53,23 @@ async function asset(file: string) {
   }
 }
 
-function html(body: string) {
+function html(body: string, scriptHashes: string[]) {
   return new Response(body, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "strict-origin-when-cross-origin",
-      "Content-Security-Policy": "base-uri 'self'; object-src 'none'; form-action 'self' https://formspree.io",
+      "Content-Security-Policy": [
+        "default-src 'self'",
+        ["script-src 'self'", ...scriptHashes].join(" "),
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data:",
+        "base-uri 'self'",
+        "object-src 'none'",
+        "form-action 'self'",
+        "frame-ancestors 'none'",
+      ].join("; "),
     },
   });
 }
@@ -72,11 +84,20 @@ function makeRelativeLinksRooted($: CheerioAPI) {
   }
 }
 
-function prepareInquiryForm($: CheerioAPI, request: Request) {
+function prepareInquiryForm($: CheerioAPI, request: Request, available: boolean) {
   const params = new URL(request.url).searchParams;
   const form = $("#enquiry").attr("action", "/api/inquiries");
-  const email = $('.c-block a[href^="mailto:"]').first().text().trim();
+  const contact = $('.c-block a[href^="mailto:"]').first();
+  const email = contact.text().trim();
   if (email) form.attr("data-contact-email", email);
+  form.prepend($('<input type="hidden" name="submission_id">').val(randomUUID()));
+  $("#phone").removeAttr("required").attr("maxlength", "32");
+  $('label[for="phone"]').text("Phone / WhatsApp");
+  $("#name").attr("maxlength", "120");
+  $("#email").attr("maxlength", "240");
+  $("#city").attr("maxlength", "160");
+  $("#message").attr("maxlength", "6000");
+  $(".form-card .fc-sub").text("Fields marked * are required. Provide an email address or phone number.");
   const kind = params.get("kind");
   const project = (params.get("project") ?? "").trim().slice(0, 140);
   const select = $('<select id="inquiry-kind" name="kind"></select>');
@@ -91,8 +112,18 @@ function prepareInquiryForm($: CheerioAPI, request: Request) {
     $(".form-card h3").text(`Inquiry about ${project}`);
   }
   const status = $("#formStatus");
-  if (params.get("result") === "sent") status.addClass("ok").text("Thank you. Your inquiry has been received.");
-  if (params.get("result") === "error") status.addClass("err").text("We could not send your inquiry. Review the required fields and try again.");
+  const result = params.get("result");
+  if (!available) form.find('button[type="submit"]').attr("disabled", "");
+  if (!available || result === "unavailable") {
+    status.addClass("err").text("The online form is temporarily unavailable.");
+    if (email) status.append(" Email us directly at ", contact.clone(), ".");
+  } else if (result === "sent") {
+    status.addClass("ok").text("Thank you. Your inquiry has been received.");
+  } else if (result === "busy") {
+    status.addClass("err").text("The inquiry inbox is busy. Try again in a few minutes.");
+  } else if (result === "error") {
+    status.addClass("err").text("Check the required fields and provide a valid email address or phone number.");
+  }
 }
 
 function updatePrivacyPolicy($: CheerioAPI, notifications: boolean) {
@@ -110,10 +141,16 @@ function trackPageView(request: Request, database: NonNullable<ReturnType<typeof
     request.headers.get("purpose") === "prefetch"
   ) return;
   after(async () => {
-    const { error } = await database.rpc("record_studio_page_view", { p_path: path });
-    if (error) console.warn("Could not increment website page count");
+    try {
+      const { error } = await database.rpc("record_studio_page_view", { p_path: path });
+      if (error) console.warn("Could not increment website page count");
+    } catch {
+      console.warn("Could not increment website page count");
+    }
   });
 }
+
+const temporarilyUnavailable = () => plain("This page is temporarily unavailable. Please try again shortly.", 503);
 
 export async function GET(request: Request, { params }: { params: Promise<{ path?: string[] }> }) {
   const parts = (await params).path ?? [];
@@ -128,39 +165,59 @@ export async function GET(request: Request, { params }: { params: Promise<{ path
   try {
     const source = await readWebsitePage(page || "projects.html");
     const database = publicDatabase();
-    if (!database) return page ? html(source) : plain("Not found", 404);
-
-    const site = await getWebsiteContent(database);
     const admin = serviceDatabase();
-    const path = parts.length === 0 || page === "index.html" ? "/" : `/${parts.join("/")}`;
+    if (!database && !page) return plain("Not found", 404);
     const $ = load(source);
+    const scriptHashes = $("script:not([src])").toArray().map(element =>
+      `'sha256-${createHash("sha256").update($(element).html() ?? "").digest("base64")}'`,
+    );
 
-    if (projectSlug) {
-      const project = await getPublishedProject(database, projectSlug);
-      if (!project) return plain("Not found", 404);
-      renderProjectDetail($, project);
-    } else if (blog) {
-      const posts = getBlogPosts(site);
-      const post = posts.find(({ slug }) => slug === parts[1]);
-      if (!posts.length || (parts.length === 2 && !post)) return plain("Not found", 404);
-      renderBlog($, posts, post);
-    } else if (testimonials) {
-      if (!renderTestimonials($, site)) return plain("Not found", 404);
-    } else if (page === "projects.html") {
-      renderProjectList($, await getPublishedProjects(database), getCategoryNames(site));
-    } else if (page === "index.html") {
-      renderFeaturedProjects($, await getPublishedProjects(database, true));
+    if (database) {
+      const [site, projects, project] = await Promise.all([
+        getWebsiteContent(database).catch(() => {
+          console.warn("Could not load managed website content");
+          return null;
+        }),
+        page === "projects.html" || page === "index.html"
+          ? getPublishedProjects(database, page === "index.html").catch(() => {
+            console.warn("Could not load published projects");
+            return null;
+          })
+          : null,
+        projectSlug ? getPublishedProject(database, projectSlug) : null,
+      ]);
+
+      if (projectSlug) {
+        if (!project) return plain("Not found", 404);
+        renderProjectDetail($, project);
+      } else if (blog) {
+        if (!site) return temporarilyUnavailable();
+        const posts = getBlogPosts(site);
+        const post = posts.find(({ slug }) => slug === parts[1]);
+        if (!posts.length || (parts.length === 2 && !post)) return plain("Not found", 404);
+        renderBlog($, posts, post);
+      } else if (testimonials) {
+        if (!site) return temporarilyUnavailable();
+        if (!renderTestimonials($, site)) return plain("Not found", 404);
+      } else if (page === "projects.html") {
+        renderProjectList($, projects ?? [], getCategoryNames(site ?? {}));
+        if (!projects) $("#pjEmpty").text("The portfolio is temporarily unavailable. Please try again shortly.");
+      } else if (page === "index.html") {
+        renderFeaturedProjects($, projects ?? []);
+      }
+
+      const path = parts.length === 0 || page === "index.html" ? "/" : `/${parts.join("/")}`;
+      if (site) renderManagedContent($, site, page, path);
+      if (admin) {
+        if (page === "privacy.html") updatePrivacyPolicy($, Boolean(inquiryMailConfig()));
+        trackPageView(request, admin, path);
+      }
     }
-    renderManagedContent($, site, page, path);
-    if (admin) {
-      if (page === "contact.html") prepareInquiryForm($, request);
-      if (page === "privacy.html") updatePrivacyPolicy($, Boolean(process.env.RESEND_API_KEY && process.env.INQUIRY_FROM_EMAIL && process.env.INQUIRY_TO_EMAIL));
-      trackPageView(request, admin, path);
-    }
+    if (page === "contact.html") prepareInquiryForm($, request, Boolean(admin && readRateLimitSecret()));
     if (projectSlug || blog) makeRelativeLinksRooted($);
-    return html($.html());
+    return html($.html(), scriptHashes);
   } catch {
     console.warn("Could not render a public website route");
-    return plain("This page is temporarily unavailable. Please try again shortly.", 503);
+    return temporarilyUnavailable();
   }
 }

@@ -17,7 +17,7 @@
 {"@context":"https://schema.org","@type":"ProfessionalService","name":"ARCH ACRE (SMC-Pvt) Ltd","description":"Architecture, interior design and planning consultancy in Lahore, Pakistan.","url":"https://archacre.com/","telephone":"+92-334-7796096","email":"archacre@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Office #1, Second Floor, Shiraz Plaza, Main Market, Gullberg II","addressLocality":"Lahore","addressCountry":"PK"},"founder":{"@type":"Person","name":"Ar. Usama Zafar","jobTitle":"Principal Architect"}}
 </script>
 <link rel="preload" as="image" href="assets/hero-courtyard.jpg" fetchpriority="high">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=full-width">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -159,12 +159,13 @@
     </div>
   </section>
 
-  <section class="stats">
-    <div class="wrap stats-grid">
-      <div class="stat rv"><div class="num"><span data-count="100">100</span><em>+</em></div><div class="lab">Projects delivered</div></div>
-      <div class="stat rv rv-d1"><div class="num"><span data-count="20">20</span><em>+</em></div><div class="lab">Cities worked in</div></div>
-      <div class="stat rv rv-d2"><div class="num"><span data-count="10">10</span><em>+</em></div><div class="lab">Team members</div></div>
-      <div class="stat rv rv-d3"><div class="num"><span data-count="5">5</span></div><div class="lab">Years in practice</div></div>
+  <section id="architecture-model" class="architecture-showcase" aria-label="Architectural model">
+    <div class="architecture-stage" role="img" aria-label="3D model of a burgundy double helix formed by folded steel ribbons and cross-bracing">
+      <picture class="architecture-poster">
+        <source media="(min-width: 621px)" srcset="assets/architecture-model-wide.webp" width="3200" height="183">
+        <img src="assets/architecture-model.webp?v=helix-1" alt="" width="900" height="286" loading="lazy" decoding="async">
+      </picture>
+      <canvas class="architecture-canvas" aria-hidden="true"></canvas>
     </div>
   </section>
 
@@ -297,5 +298,6 @@
 </div>
 
 <script src="assets/script.js"></script>
+<script src="assets/architecture-model.js?v=full-width" defer></script>
 </body>
 </html>

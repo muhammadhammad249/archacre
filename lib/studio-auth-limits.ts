@@ -1,9 +1,9 @@
 import "server-only";
 
 import { createHmac } from "node:crypto";
-import { createClient } from "@supabase/supabase-js";
 import { headers } from "next/headers";
-import { readStudioConfig } from "./studio-auth-config";
+import { serviceDatabase } from "./public-db";
+import { readRateLimitSecret } from "./studio-auth-config";
 
 const attempts = {
   login: { limit: 8, seconds: 600 },
@@ -13,10 +13,9 @@ const attempts = {
 } as const;
 
 export async function consumeAuthAttempt(action: keyof typeof attempts, identity: string) {
-  const config = readStudioConfig();
-  const secretKey = process.env.SUPABASE_SECRET_KEY;
-  const rateSecret = process.env.STUDIO_RATE_LIMIT_SECRET;
-  if (!config || !secretKey || !rateSecret || rateSecret.length < 32) return "unavailable";
+  const database = serviceDatabase();
+  const rateSecret = readRateLimitSecret();
+  if (!database || !rateSecret) return "unavailable";
 
   // Only Vercel's own forwarding header is trusted as an anonymous client hint.
   const anonymous = action === "login" || action === "recovery";
@@ -27,9 +26,6 @@ export async function consumeAuthAttempt(action: keyof typeof attempts, identity
     .update(JSON.stringify(["studio-auth", action, identity, client ?? "default"]))
     .digest("hex");
   const { limit, seconds } = attempts[action];
-  const database = createClient(config.url, secretKey, {
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-  });
   const { data, error } = await database.rpc("consume_studio_rate_limit", {
     p_key: key,
     p_limit: limit,

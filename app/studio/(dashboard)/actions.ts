@@ -4,6 +4,8 @@ import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { deliverInquiryNotifications } from "@/lib/inquiry-mail";
+import { serviceDatabase } from "@/lib/public-db";
 import { requireAdmin } from "@/lib/studio-auth";
 import { inquiryStatuses, isCmsSection, parseContent, projectInput, slugFor, studioId } from "@/lib/studio-model";
 
@@ -12,7 +14,7 @@ const bucket = "studio-media";
 const formats = new Set(["jpeg", "png", "webp", "avif"]);
 const cropSizes: Record<string, [number, number]> = { square: [1400, 1400], landscape: [1760, 1100], portrait: [1200, 1600] };
 function go(path: string, notice: string): never {
-  if (notice === "saved" || notice === "deleted" || notice === "uploaded" || notice === "retry-delete") {
+  if (notice === "saved" || notice === "deleted" || notice === "uploaded" || notice === "retry-delete" || notice === "mail-processed") {
     revalidatePath("/studio", "layout");
   }
   redirect(path + "?notice=" + notice);
@@ -82,6 +84,18 @@ export async function changeInquiryStatus(form: FormData) {
   if (!id.success || !status) return go("/studio/inquiries", "invalid");
   const { data, error } = await supabase.from("inquiries").update({ status }).eq("id", id.data).select("id").maybeSingle();
   go("/studio/inquiries", error || !data ? "failed" : "saved");
+}
+
+export async function processInquiryEmail() {
+  await requireAdmin();
+  let processed;
+  try {
+    const database = serviceDatabase();
+    processed = database && await deliverInquiryNotifications(database);
+  } catch {
+    return go("/studio/inquiries", "mail-unavailable");
+  }
+  go("/studio/inquiries", processed ? "mail-processed" : "mail-unavailable");
 }
 
 export async function uploadMedia(form: FormData) {

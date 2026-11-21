@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getStudioMember, studioConfigured } from "../../../lib/studio-auth";
+import { getStudioMember } from "../../../lib/studio-auth";
+import { studioSignInConfigured } from "../../../lib/studio-auth-config";
 import { AuthCard } from "../auth-card";
 import { LoginForm } from "../auth-forms";
 
@@ -16,7 +17,7 @@ export default async function LoginPage({ searchParams }: {
   const member = await getStudioMember();
   if (member) redirect(member.verified ? "/studio" : "/studio/verify");
   const { reset } = await searchParams;
-  const configured = studioConfigured();
+  const configured = studioSignInConfigured();
 
   return (
     <AuthCard title="Studio sign-in" description="Use your administrator account to access the dashboard.">

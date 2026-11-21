@@ -3,7 +3,8 @@ import { checked, readRows } from "@/lib/studio-data";
 import { defaultContent } from "@/lib/studio-defaults";
 import { cmsSections, inquiryKinds, inquiryStatuses, type CmsSection, type CmsValue, type Inquiry, type Media } from "@/lib/studio-model";
 import { changePassword } from "../auth-actions";
-import { changeInquiryStatus, deleteMedia } from "./actions";
+import { changeInquiryStatus, deleteMedia, processInquiryEmail } from "./actions";
+import { inquiryMailConfig } from "@/lib/inquiry-mail";
 import { ContentEditor } from "./content-editor";
 import { MediaUpload } from "./media-upload";
 import { queryValue, type Query, type StudioClient } from "./types";
@@ -117,11 +118,13 @@ export async function MediaView({ db, notice }: { db: StudioClient; notice?: str
 }
 
 export async function InquiriesView({ db, query, notice }: { db: StudioClient; query: Query; notice?: string }) {
+  const notificationLabels = { pending: "Queued", sent: "Accepted by email provider", failed: "Email failed" };
+  type InboxItem = Inquiry & { inquiry_notifications: { state: keyof typeof notificationLabels } | null };
   const term = (queryValue(query, "q") ?? "").trim().slice(0, 120);
   const status = inquiryStatuses.find(option => option === queryValue(query, "status"));
   const kind = inquiryKinds.find(option => option === queryValue(query, "kind"));
-  const all = await readRows<Inquiry>((start, end) => {
-    let results = db.from("inquiries").select("*").order("created_at", { ascending: false }).order("id");
+  const all = await readRows<InboxItem>((start, end) => {
+    let results = db.from("inquiries").select("*,inquiry_notifications(state)").order("created_at", { ascending: false }).order("id");
     if (status) results = results.eq("status", status);
     if (kind) results = results.eq("kind", kind);
     return results.range(start, end);
@@ -130,6 +133,9 @@ export async function InquiriesView({ db, query, notice }: { db: StudioClient; q
     .some(value => value?.toLowerCase().includes(term.toLowerCase()))) : all;
   return <>
     <Heading title="Inquiries" description="Review requests and track follow-up.">
+      {inquiryMailConfig() && <form action={processInquiryEmail}>
+        <button className="button" type="submit">Process email queue</button>
+      </form>}
       <a className="button" href="/studio/inquiries/export">Export CSV</a>
     </Heading>
     <Notice code={notice} />
@@ -147,7 +153,8 @@ export async function InquiriesView({ db, query, notice }: { db: StudioClient; q
       {visible.length > 0 ? visible.map(item => <details className="studio-inquiry" key={item.id}>
         <summary>{item.name} · {item.kind} · {dateLabel(item.created_at)} <Status value={item.status} /></summary>
         <p><strong>Phone</strong> {item.phone}</p>
-        {item.email && <p><strong>Email</strong> {item.email}</p>}
+        {item.email && <p><strong>Email</strong> <a className="studio-link" href={`mailto:${encodeURIComponent(item.email).replace(/%40/g, "@")}`}>{item.email}</a></p>}
+        {item.inquiry_notifications && <p><strong>Notification</strong> {notificationLabels[item.inquiry_notifications.state]}</p>}
         {item.service && <p><strong>Service</strong> {item.service}</p>}
         {item.city && <p><strong>Location</strong> {item.city}</p>}
         <p>{item.message}</p>

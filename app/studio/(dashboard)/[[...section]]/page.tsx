@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/studio-auth";
 import { isCmsSection } from "@/lib/studio-model";
-import { ProjectView, ProjectsView } from "../project-views";
+import { ProjectView, ProjectsView, RemoveProjectView } from "../project-views";
 import { ContentView, InquiriesView, MediaView, Overview, ProfileView } from "../studio-views";
 import { queryValue, type Query } from "../types";
 
@@ -11,8 +11,11 @@ export default async function StudioPage({ params, searchParams }: {
 }) {
   const { supabase, user } = await requireAdmin();
   const [{ section = [] }, query] = await Promise.all([params, searchParams]);
-  const [screen, detail, extra] = section;
-  if (extra) notFound();
+  const [screen, detail, action] = section;
+  if (section.length === 3 && screen === "projects" && action === "remove") {
+    return <RemoveProjectView db={supabase} id={detail} />;
+  }
+  if (section.length > 2) notFound();
   const notice = queryValue(query, "notice");
   switch (screen) {
     case undefined: return <Overview db={supabase} />;
